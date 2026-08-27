@@ -68,8 +68,9 @@
 
     <div class="garante">
       <span class="occhiello">Uno strumento</span>
-      <img src="{{ url_for('cosmetech_ui.static', filename='logo-cosmetech-academy-bianco.png') }}"
-           alt="Cosmetech Academy">
+      <a href="https://cosmetechacademy.com"><img
+         src="{{ url_for('cosmetech_ui.static', filename='logo-cosmetech-academy-bianco.png') }}"
+         alt="Cosmetech Academy"></a>
     </div>
 
   </div>
@@ -104,19 +105,22 @@
 
   <!-- 1. marchio + social -->
   <div class="contenitore pieno-1">
-    <img src="{{ url_for('cosmetech_ui.static', filename='logo-cosmetech-academy-bianco.png') }}"
-         alt="Cosmetech Academy">
+    <a href="https://cosmetechacademy.com"><img
+       src="{{ url_for('cosmetech_ui.static', filename='logo-cosmetech-academy-bianco.png') }}"
+       alt="Cosmetech Academy"></a>
     <div class="social">
-      <a href="#" title="Facebook">f</a>
-      <a href="#" title="Instagram">ig</a>
-      <a href="#" title="YouTube">yt</a>
+      <a href="https://www.facebook.com/CosmeTechAcademy" title="Facebook">f</a>
+      <a href="https://www.instagram.com/cosmetechacademy" title="Instagram">ig</a>
+      <a href="https://www.youtube.com/@Cosme-Tech" title="YouTube">yt</a>
     </div>
   </div>
 
   <!-- 2. slot dell'app -->
   {% set _footer_app %}{% block footer_app %}{% endblock %}{% endset %}
   {% if _footer_app.strip() %}
-  <div class="contenitore pieno-2">{{ _footer_app }}</div>
+  <div class="contenitore">
+    <div class="pieno-2">{{ _footer_app }}</div>
+  </div>
   {% endif %}
 
   <!-- 3. legale -->

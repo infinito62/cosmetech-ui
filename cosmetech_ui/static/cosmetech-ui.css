@@ -118,6 +118,7 @@ h1,h2,h3 { font-family: var(--font-titoli); font-weight:400; margin:0; color: va
   display:block; font-size:10.5px; letter-spacing:.15em;
   text-transform:uppercase; opacity:.6; margin-bottom:6px;
 }
+.garante a { display:block; }
 .garante img { height:32px; width:auto; display:block; margin-left:auto; }
 
 /* ── MENU (assente nella variante lite) ─────────────────── */
@@ -170,6 +171,7 @@ hr.filetto { border:0; border-top:1px solid var(--filetto); margin: var(--sp-3) 
   padding: var(--sp-4) 0 var(--sp-2);
   display:flex; align-items:center; justify-content:space-between; gap: var(--sp-3);
 }
+.pieno-1 > a { display:block; }
 .pieno-1 img { height:44px; width:auto; display:block; }
 .social { display:flex; gap:10px; }
 .social a {

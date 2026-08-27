@@ -158,6 +158,19 @@ def controlla(reso):
     if '<span class="nome">' not in master:
         guasti.append("master non mostra il marchio sovrascritto dall'app")
 
+    for nome, html in reso.items():
+        # il logo del garante e' cliccabile in header e in footer
+        if html.count('href="https://cosmetechacademy.com"><img') != 2:
+            guasti.append(f"{nome}: il logo Academy non e' cliccabile due volte")
+        # la fascia social non deve avere link morti
+        fascia = html.split('class="social"')[1].split("</div>")[0]
+        if 'href="#"' in fascia:
+            guasti.append(f"{nome}: un social punta ancora a #")
+        # lo slot dell'app sta dentro un .contenitore pieno: si allinea a
+        # sinistra come le altre due sezioni invece di restare centrato
+        if 'class="contenitore pieno-2"' in html:
+            guasti.append(f"{nome}: pieno-2 e' ancora il contenitore, resta centrato")
+
     if not APP_FINTA.exists():
         print(f"nota: {APP_FINTA} non c'e', i marchi dell'app "
               "resteranno immagini rotte nel browser")
