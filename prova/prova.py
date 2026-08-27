@@ -5,9 +5,9 @@ senza agganciare un'app.
     python3 prova/prova.py
 
 Scrive prova/uscita/lite.html e prova/uscita/master.html, da aprire nel
-browser. Verifica anche le due cose che non si vedono a occhio:
-il <nav class="menu"> assente in lite, e il blocco avviso che sparisce
-quando lo slot e' vuoto.
+browser. Oltre a farli vedere, controlla le cose che a occhio non si
+notano: il <nav class="menu"> assente in lite, il blocco avviso che
+sparisce quando lo slot e' vuoto, il blocco legale sempre presente.
 """
 
 import pathlib
@@ -26,35 +26,69 @@ def url_for(endpoint, filename=""):
     return f"../../cosmetech_ui/static/{filename}"
 
 
-UTENTE_LITE = (
-    "<strong>Marta Bianchi</strong> · Formulatrice · <a href='#'>esci</a>"
-)
-UTENTE_SSO = (
-    "<strong>Marta Bianchi</strong> · piano <span>Pro</span> · <a href='#'>esci</a>"
-)
-
-CONTENUTO = """
-  <div class="carta">
-    <h2 style="margin-top:0">Contenuto finto</h2>
-    <p>Questo blocco arriva dall'app: il guscio non sa cosa contenga.</p>
-    <p><label>Un campo <input placeholder="scrivi qui"></label></p>
-    <p><a class="pulsante" href="#">Un pulsante</a></p>
-  </div>
+# Il riquadro tratteggiato del prototipo: e' scenografia della prova, non
+# fa parte del guscio, quindi vive qui e passa dallo slot `testa`.
+STILE_PROVA = """
+  <style>
+    .slot {
+      border:2px dashed var(--filetto); border-radius: var(--radius);
+      background: var(--tenue); min-height:330px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center; color: var(--testo-tenue);
+    }
+    .slot strong { display:block; font-family: var(--font-titoli);
+                   font-size:20px; color: var(--c4-titoli); margin-bottom:8px; }
+    .slot span { font-size:14px; }
+  </style>
 """
 
+# La riga che un'app vera scriverebbe nel proprio foglio: solo le quattro.
+PALETTE_VERDE = """
+  <style>
+    :root { --c1-fondo:#1d4d3b; --c2-menu:#153a2c;
+            --c3-pulsante:#2f8f68; --c4-titoli:#1d4d3b; }
+  </style>
+"""
+
+CONTENUTO = """
+      <div class="slot">
+        <div>
+          <strong>Contenuto dell'app</strong>
+          <span>Larghezza piena fino a 1180px, oppure colonna centrale da 880px.<br>
+          Card, pulsanti, campi e filetti arrivano gia' dal container.</span>
+        </div>
+      </div>
+"""
+
+FOOTER_APP = (
+    "Slot dell'app — qui allergeni-calc mette cio' che le serve: versione "
+    "del dizionario delle sostanze, riferimenti normativi, note di metodo, "
+    "limiti dello strumento."
+)
+
 PAGINE = {
-    # nome file : (template esteso, blocchi aggiuntivi)
-    "lite.html": ("lite.html", {"utente": UTENTE_LITE, "avviso": ""}),
-    "master.html": (
-        "master.html",
-        {
-            "utente": UTENTE_SSO,
-            "avviso": "Dal 31 luglio 2026 cambia l'Allegato III. "
-                      "<a href='#'>Cosa cambia</a>",
-            "menu": "<a class='attivo' href='#'>Calcolo</a>"
-                    "<a href='#'>Storico</a><a href='#'>Guida</a>",
-        },
-    ),
+    # nome file : (guscio esteso, blocchi dell'app finta)
+    "lite.html": ("lite.html", {
+        "testa": STILE_PROVA,
+        "utente": "<strong>Riccardo</strong> · Formulatore, cosmetologo · "
+                  "<a href='#'>esci</a>",
+        "avviso": "",
+        "footer_app": FOOTER_APP,
+    }),
+    "master.html": ("master.html", {
+        # qui l'app ridefinisce anche la palette, per mostrare che bastano
+        # le quattro variabili a cambiare famiglia di colore
+        "testa": STILE_PROVA + PALETTE_VERDE,
+        "utente": "<strong>Riccardo</strong> · piano <span>Pro</span> · "
+                  "<a href='#'>esci</a>",
+        "avviso": "Anteprima tecnica — il dizionario normativo e' in fase di "
+                  "validazione, alcune sostanze possono risultare non coperte.",
+        "menu": "<li><a href='#' class='attivo'>Calcolo</a></li>"
+                "<li><a href='#'>Le mie schede</a></li>"
+                "<li><a href='#'>Impostazioni</a></li>"
+                "<li><a href='#'>Novita'</a></li>",
+        "footer_app": FOOTER_APP,
+    }),
 }
 
 
@@ -62,26 +96,59 @@ def sorgente(base, blocchi):
     """Costruisce al volo il template di un'app finta che estende il guscio."""
     righe = [f'{{% extends "{base}" %}}']
     righe.append(
-        "{% block marchio_app %}<span>AppDiProva</span>{% endblock %}"
+        '{% block marchio_app %}<span class="nome">AllergeniCalc</span>'
+        "{% endblock %}"
     )
-    righe.append("{% block titolo %}Titolo dello strumento{% endblock %}")
     righe.append(
-        "{% block sottotitolo %}Riga di contesto sotto il titolo{% endblock %}"
+        "{% block titolo %}Quali allergeni devi dichiarare in etichetta"
+        "{% endblock %}"
+    )
+    righe.append(
+        "{% block sottotitolo %}Reg. UE 2023/1545 · soglie leave-on e "
+        "rinse-off{% endblock %}"
     )
     for nome, testo in blocchi.items():
         righe.append(f"{{% block {nome} %}}{testo}{{% endblock %}}")
     righe.append("{% block contenuto %}" + CONTENUTO + "{% endblock %}")
-    righe.append(
-        "{% block footer_app %}<strong>AppDiProva</strong> "
-        "— sezione dell'app nel footer{% endblock %}"
-    )
     return "\n".join(righe)
+
+
+def controlla(reso):
+    guasti = []
+    lite, master = reso["lite.html"], reso["master.html"]
+
+    if '<nav class="menu">' in lite:
+        guasti.append("lite emette la barra del menu: non deve esistere")
+    if '<nav class="menu">' not in master:
+        guasti.append("master non emette il menu pieno")
+    if 'class="avviso"' in lite:
+        guasti.append("l'avviso vuoto lascia comunque il suo blocco")
+    if 'class="avviso"' not in master:
+        guasti.append("l'avviso pieno non compare")
+    if "piano <span>" in lite:
+        guasti.append("lite mostra il riconoscimento in formato SSO")
+
+    for nome, html in reso.items():
+        for atteso, cosa in [
+            ("logo-academy.png", "logo Academy"),
+            ("Uno strumento", "occhiello del garante"),
+            ("P. IVA IT02924640648", "blocco legale"),
+            ('class="social"', "fascia social"),
+            ("pieno-2", "slot dell'app nel footer"),
+            ("cosmetech-ui.css", "foglio del pacchetto"),
+        ]:
+            if atteso not in html:
+                guasti.append(f"{nome}: manca {cosa}")
+        # il logo del garante compare due volte: header e footer
+        if html.count("logo-academy.png") != 2:
+            guasti.append(f"{nome}: il logo Academy non compare in header e footer")
+    return guasti
 
 
 def main():
     env = Environment(
         loader=FileSystemLoader(RADICE / "cosmetech_ui" / "templates"),
-        autoescape=True,
+        autoescape=True,   # come in Flask sui .html
     )
     env.globals["url_for"] = url_for
     USCITA.mkdir(parents=True, exist_ok=True)
@@ -93,21 +160,7 @@ def main():
         reso[nome] = html
         print(f"scritto  prova/uscita/{nome}")
 
-    guasti = []
-    if '<nav class="menu">' in reso["lite.html"]:
-        guasti.append("lite renderizza la barra del menu: non deve esistere")
-    if '<nav class="menu">' not in reso["master.html"]:
-        guasti.append("master non renderizza il menu pieno")
-    if 'class="avviso"' in reso["lite.html"]:
-        guasti.append("l'avviso vuoto lascia comunque il suo blocco")
-    if 'class="avviso"' not in reso["master.html"]:
-        guasti.append("l'avviso pieno non compare")
-    for nome, html in reso.items():
-        if "piano <span>" in html and nome == "lite.html":
-            guasti.append("lite mostra il riconoscimento in formato SSO")
-        if "logo-academy.png" not in html:
-            guasti.append(f"{nome}: manca il logo Academy")
-
+    guasti = controlla(reso)
     if guasti:
         for g in guasti:
             print("GUASTO:", g)
