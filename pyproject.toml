@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cosmetech-ui"
+version = "0.1.0"
+description = "Il guscio comune delle app Cosmetech: header, footer e stili in una sola copia."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["flask>=3.0"]
+
+[project.urls]
+Homepage = "https://github.com/infinito62/cosmetech-ui"
+
+[tool.setuptools]
+packages = ["cosmetech_ui"]
+include-package-data = true
+
+# I template e gli statici non sono accessori: sono il pacchetto. Vanno
+# nella distribuzione, altrimenti l'installazione da git non serve a nulla.
+[tool.setuptools.package-data]
+cosmetech_ui = [
+    "templates/*.html",
+    "static/*.css",
+    "static/*.png",
+    "static/fonts/*",
+]

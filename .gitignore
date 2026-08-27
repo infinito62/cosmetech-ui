@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.claude/
+build/
+dist/
+*.egg-info/
+prova/uscita/

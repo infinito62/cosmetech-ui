@@ -1,0 +1,96 @@
+{#
+  master.html — il guscio completo delle app Cosmetech.
+
+  L'app non copia nulla di questo file: lo estende e riempie gli slot.
+
+    marchio_app   logo e/o nome dell'app, a sinistra nell'header
+    titolo        titolo dell'app
+    sottotitolo   riga descrittiva sotto il titolo
+    utente        riconoscimento utente (due formati, vedi README)
+    menu          voci del menu; se vuoto la barra non viene renderizzata
+    avviso        banner sotto l'header; se vuoto il blocco non compare
+    contenuto     il corpo dell'app
+    footer_app    sezione dell'app nel footer
+
+  Slot di servizio, per agganciare i file dell'app:
+
+    testa         va nel <head> DOPO il css del pacchetto: e' qui che
+                  l'app ridefinisce le quattro variabili di colore
+    copertina     titolo della finestra, se diverso dal titolo dell'app
+    scripts       in coda al <body>
+
+  Non sono sovrascrivibili, e non devono esserlo: il logo Academy in
+  header e nel footer, la fascia social, il blocco legale.
+#}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block copertina %}{{ self.titolo() }} — Cosmetech Academy{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('cosmetech_ui.static', filename='cosmetech-ui.css') }}">
+{% block testa %}{% endblock %}
+</head>
+<body>
+
+<header class="guscio-testata">
+  <div class="testata-marchio">{% block marchio_app %}{% endblock %}</div>
+
+  <div class="testata-centro">
+    <p class="testata-titolo">{% block titolo %}{% endblock %}</p>
+    {% set _sottotitolo %}{% block sottotitolo %}{% endblock %}{% endset %}
+    {% if _sottotitolo.strip() %}<p class="testata-sottotitolo">{{ _sottotitolo }}</p>{% endif %}
+    {% set _utente %}{% block utente %}{% endblock %}{% endset %}
+    {% if _utente.strip() %}<p class="testata-utente">{{ _utente }}</p>{% endif %}
+  </div>
+
+  <div class="testata-firma">
+    <div class="firma-occhiello">Uno strumento</div>
+    <a class="firma-academy" href="https://cosmetechacademy.com">
+      <img src="{{ url_for('cosmetech_ui.static', filename='logo-academy.png') }}"
+           alt="Cosmetech Academy" width="500" height="160">
+    </a>
+  </div>
+</header>
+
+{# Il menu esiste solo se qualcuno lo riempie: lite.html lo lascia vuoto
+   e la barra non viene emessa affatto, non nascosta. #}
+{% set _menu %}{% block menu %}{% endblock %}{% endset %}
+{% if _menu.strip() %}<nav class="menu">{{ _menu }}</nav>{% endif %}
+
+{% set _avviso %}{% block avviso %}{% endblock %}{% endset %}
+{% if _avviso.strip() %}<div class="avviso">{{ _avviso }}</div>{% endif %}
+
+<main class="contenuto">{% block contenuto %}{% endblock %}</main>
+
+<footer class="guscio-chiusura">
+  {% set _footer_app %}{% block footer_app %}{% endblock %}{% endset %}
+  {% if _footer_app.strip() %}<div class="chiusura-app">{{ _footer_app }}</div>{% endif %}
+
+  <div class="chiusura-firma">
+    <a class="firma-academy" href="https://cosmetechacademy.com">
+      <img src="{{ url_for('cosmetech_ui.static', filename='logo-academy.png') }}"
+           alt="Cosmetech Academy" width="500" height="160">
+    </a>
+  </div>
+
+  <div class="chiusura-social">
+    <a href="https://www.instagram.com/cosmetechacademy" rel="noopener">Instagram</a>
+    <a href="https://www.linkedin.com/company/cosmetechacademy" rel="noopener">LinkedIn</a>
+    <a href="https://www.youtube.com/@cosmetechacademy" rel="noopener">YouTube</a>
+  </div>
+
+  <div class="chiusura-legale">
+    <p class="legale-copyright">© Cosmetech Academy — tutti i diritti riservati</p>
+    <p class="legale-piva">P.IVA IT00000000000</p>
+    <p class="legale-link">
+      <a href="https://cosmetechacademy.com/privacy">Informativa privacy</a>
+      <a href="https://cosmetechacademy.com/cookie">Cookie</a>
+      <a href="https://cosmetechacademy.com/termini">Termini di servizio</a>
+    </p>
+  </div>
+</footer>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

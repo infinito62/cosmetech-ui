@@ -1,0 +1,3 @@
+recursive-include cosmetech_ui/templates *.html
+recursive-include cosmetech_ui/static *.css *.png
+recursive-include cosmetech_ui/static/fonts *

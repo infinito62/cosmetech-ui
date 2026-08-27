@@ -1,0 +1,9 @@
+{#
+  lite.html — il guscio senza menu.
+
+  Identico a master.html in tutto il resto. Lo slot `menu` resta vuoto:
+  master.html non emette il <nav class="menu">, non lo nasconde. Un'app
+  che estende questo file non deve sapere che il menu esiste.
+#}
+{% extends "master.html" %}
+{% block menu %}{% endblock %}

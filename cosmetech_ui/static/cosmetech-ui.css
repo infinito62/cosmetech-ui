@@ -1,0 +1,240 @@
+/* =========================================================================
+   cosmetech-ui — il foglio di stile del guscio comune.
+
+   Le sole quattro variabili che un'app ridefinisce stanno qui sotto, in
+   cima. Tutto il resto deriva da --c1-fondo con color-mix: chi sviluppa
+   un'app non sceglie il colore di un bordo, di uno sfondo o di un filetto,
+   perche' non c'e' nessun colore scritto fisso da nessun'altra parte.
+
+   L'app carica il proprio foglio DOPO questo e ridefinisce le quattro:
+
+     :root { --c1-fondo: #123; --c3-pulsante: #456; }
+   ========================================================================= */
+
+@font-face {
+  font-family: "Questrial";
+  src: url("fonts/questrial.ttf") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-regular.ttf") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-bold.ttf") format("truetype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* --- le quattro, e solo queste, si ridefiniscono ------------------- */
+  --c1-fondo:    #121660;  /* header, footer, filetti, hover del menu   */
+  --c2-menu:     color-mix(in srgb, var(--c1-fondo) 84%, #fff);
+  --c3-pulsante: #4c2edc;  /* pulsanti e link                           */
+  --c4-titoli:   #121660;  /* titoli nel corpo                          */
+
+  /* --- da qui in giu' e' tutto derivato: non si tocca ---------------- */
+  --g-pagina:   color-mix(in srgb, var(--c1-fondo)  7%, #fff);
+  --g-carta:    #fff;
+  --g-tenue:    color-mix(in srgb, var(--c1-fondo)  4%, #fff);
+  --g-filetto:  color-mix(in srgb, var(--c1-fondo) 16%, #fff);
+  --g-testo:    color-mix(in srgb, var(--c1-fondo) 22%, #1f1f27);
+  --g-grigio:   color-mix(in srgb, var(--c1-fondo) 18%, #6a6a78);
+  --g-ombra:    0 2px 18px color-mix(in srgb, var(--c1-fondo) 22%, transparent);
+
+  /* sopra il fondo scuro di header e footer */
+  --g-chiaro:      #fff;
+  --g-chiaro-70:   color-mix(in srgb, #fff 72%, var(--c1-fondo));
+  --g-chiaro-filo: color-mix(in srgb, #fff 22%, transparent);
+
+  --g-larghezza: 1080px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.55;
+  background: var(--g-pagina);
+  color: var(--g-testo);
+}
+
+a { color: var(--c3-pulsante); }
+
+/* ---------------------------------------------------------------- header */
+
+.guscio-testata {
+  background: var(--c1-fondo);
+  color: var(--g-chiaro);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 24px 26px;
+}
+.guscio-testata a { color: var(--g-chiaro-70); }
+
+.testata-marchio img { height: 60px; width: auto; display: block; max-width: 100%; }
+.testata-marchio { font-family: "Questrial", sans-serif; font-size: 26px; }
+
+.testata-centro {
+  border-left: 1px solid var(--g-chiaro-filo);
+  padding-left: 24px;
+  min-width: 0;
+}
+.testata-titolo {
+  margin: 0;
+  font-family: "Questrial", sans-serif;
+  font-size: 28px; line-height: 1.2; font-weight: 400;
+  color: var(--g-chiaro);
+}
+.testata-sottotitolo,
+.testata-utente {
+  margin: 4px 0 0;
+  font-size: 15px; line-height: 1.4;
+  color: var(--g-chiaro-70);
+}
+.testata-utente span {
+  border: 1px solid var(--g-chiaro-filo);
+  border-radius: 4px; padding: 0 .4em; font-size: 13px;
+}
+.testata-utente strong { color: var(--g-chiaro); }
+
+.testata-firma { margin-left: auto; text-align: right; }
+.firma-occhiello {
+  font-size: 12px; text-transform: uppercase; letter-spacing: .6px;
+  color: var(--g-chiaro-70); margin-bottom: 5px;
+}
+.firma-academy { display: block; }
+.firma-academy img { display: block; width: auto; height: 46px; margin-left: auto; }
+
+/* ------------------------------------------------------------------ menu */
+
+.menu {
+  background: var(--c2-menu);
+  padding: 0 26px;
+  display: flex; flex-wrap: wrap; gap: 2px;
+}
+.menu a {
+  display: block; padding: 11px 16px;
+  color: var(--g-chiaro); text-decoration: none;
+  font-size: 15px;
+}
+.menu a:hover,
+.menu a.attivo { background: var(--c1-fondo); }
+
+/* ---------------------------------------------------------------- avviso */
+
+.avviso {
+  background: var(--g-tenue);
+  border-bottom: 1px solid var(--g-filetto);
+  padding: 12px 26px;
+  font-size: .93rem;
+}
+
+/* -------------------------------------------------------------- contenuto */
+
+.contenuto {
+  max-width: var(--g-larghezza);
+  margin: 1.5rem auto;
+  padding: 0 1rem 3rem;
+}
+.contenuto h1, .contenuto h2, .contenuto h3 {
+  font-family: "Questrial", sans-serif; font-weight: 400;
+  color: var(--c4-titoli);
+}
+
+.contenuto small, .nota { color: var(--g-grigio); font-size: .85rem; }
+
+.carta {
+  background: var(--g-carta);
+  border: 1px solid var(--g-filetto);
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  box-shadow: var(--g-ombra);
+}
+
+.pulsante {
+  display: inline-block;
+  padding: .6rem 1.2rem; border-radius: 5px;
+  font: inherit; font-weight: 700; font-size: .95rem;
+  cursor: pointer; text-decoration: none;
+  border: 1px solid var(--c3-pulsante);
+  background: var(--c3-pulsante); color: var(--g-carta);
+  transition: background .15s, color .15s;
+}
+.pulsante:hover { background: var(--g-carta); color: var(--c3-pulsante); }
+
+input, select, textarea {
+  font: inherit; color: var(--g-testo);
+  padding: .55rem .7rem;
+  background: var(--g-carta);
+  border: 1px solid var(--g-filetto); border-radius: 6px;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--c3-pulsante); outline-offset: -1px;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.guscio-chiusura {
+  background: var(--c1-fondo);
+  color: var(--g-chiaro-70);
+  padding: 32px 26px 24px;
+  font-size: .9rem;
+}
+.guscio-chiusura a { color: var(--g-chiaro-70); }
+.guscio-chiusura a:hover { color: var(--g-chiaro); }
+.guscio-chiusura > * {
+  max-width: var(--g-larghezza);
+  margin-left: auto; margin-right: auto;
+}
+
+.chiusura-app { padding-bottom: 22px; }
+.chiusura-app strong, .chiusura-app h2, .chiusura-app h3 { color: var(--g-chiaro); }
+
+.chiusura-firma { padding-bottom: 18px; }
+.chiusura-firma .firma-academy img { height: 38px; margin-left: 0; }
+
+.chiusura-social {
+  display: flex; flex-wrap: wrap; gap: 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--g-chiaro-filo);
+  border-bottom: 1px solid var(--g-chiaro-filo);
+}
+.chiusura-social a { text-decoration: none; }
+
+.chiusura-legale { padding-top: 16px; font-size: .82rem; }
+.chiusura-legale p { margin: 0 0 4px; }
+.chiusura-legale .legale-link a { margin-right: 16px; }
+
+/* ----------------------------------------------------------- adattamenti */
+
+@media (max-width: 768px) {
+  .guscio-testata { padding: 18px 20px; }
+  .testata-marchio img { height: 46px; }
+  .testata-titolo { font-size: 22px; }
+  .testata-sottotitolo, .testata-utente { font-size: 14px; }
+  .firma-occhiello { display: none; }
+  .testata-firma .firma-academy img { height: 34px; }
+  .menu, .avviso, .guscio-chiusura { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (max-width: 480px) {
+  .guscio-testata { gap: 14px; padding: 16px; }
+  .testata-marchio img { height: 34px; }
+  .testata-titolo { font-size: 19px; }
+  .testata-sottotitolo, .testata-utente { font-size: 13px; }
+  .testata-firma { order: 2; }
+  .testata-centro {
+    order: 3; flex-basis: 100%;
+    border-left: none; padding-left: 0;
+    border-top: 1px solid var(--g-chiaro-filo); padding-top: 10px;
+  }
+  .testata-firma .firma-academy img { height: 26px; }
+  .menu { padding: 0 8px; }
+  .menu a { padding: 10px 12px; font-size: 14px; }
+}
