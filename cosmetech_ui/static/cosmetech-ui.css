@@ -156,7 +156,11 @@ h1,h2,h3 { font-family: var(--font-titoli); font-weight:400; margin:0; color: va
 .btn-secondario { background: var(--bianco); color: var(--c3-pulsante); }
 .btn-secondario:hover { background: var(--c3-pulsante); color: var(--bianco); }
 a { color: var(--c3-pulsante); }
-label, th {
+/* Il maiuscoletto e' un'intestazione di colonna, non un'etichetta: sui <th>
+   vale sempre, altrove solo dove l'app lo chiede. Applicarlo a ogni <label>
+   costringerebbe ogni app a disfarlo, perche' le etichette dei campi sono
+   frasi da leggere, non titoli. */
+th, .etichetta {
   font-size:12px; letter-spacing:.05em; text-transform:uppercase;
   color: var(--testo-tenue); font-weight:600;
 }

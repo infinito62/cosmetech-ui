@@ -198,7 +198,9 @@ disponibili, senza scrivere una riga di CSS:
 - `.colonna` — colonna centrale da 880px, per le app che stanno strette.
 - `.card` — pannello bianco con filetto, raggio e ombra.
 - `.btn` e `.btn-secondario` — i pulsanti, con l'hover a colori invertiti.
-- `label` e `th` — maiuscoletto spaziato, già stilati.
+- `th` — maiuscoletto spaziato per le intestazioni di colonna, e la classe
+  `.etichetta` per applicarlo altrove. I `<label>` restano come sono: sono
+  frasi da leggere, e un'app non deve disfare uno stile che non ha chiesto.
 - `hr.filetto` — il separatore.
 - la scala di spazi `--sp-1`…`--sp-5` e i token `--radius`, `--ombra`,
   `--font-titoli`, `--font-testo`.

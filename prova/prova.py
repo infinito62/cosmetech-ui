@@ -11,6 +11,7 @@ sparisce quando lo slot e' vuoto, il blocco legale sempre presente.
 """
 
 import pathlib
+import re
 import sys
 
 from jinja2 import Environment, FileSystemLoader
@@ -170,6 +171,12 @@ def controlla(reso):
         # sinistra come le altre due sezioni invece di restare centrato
         if 'class="contenitore pieno-2"' in html:
             guasti.append(f"{nome}: pieno-2 e' ancora il contenitore, resta centrato")
+
+    # Il maiuscoletto non deve tornare su tutti i <label>: un'app non puo'
+    # essere costretta a disfare uno stile del guscio.
+    css = (RADICE / "cosmetech_ui" / "static" / "cosmetech-ui.css").read_text()
+    if re.search(r"(?m)^\s*label\s*[,{]", css):
+        guasti.append("il css stila i <label> nudi: le app dovranno neutralizzarlo")
 
     if not APP_FINTA.exists():
         print(f"nota: {APP_FINTA} non c'e', i marchi dell'app "
