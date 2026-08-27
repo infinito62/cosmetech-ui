@@ -115,9 +115,13 @@ aggancia mettendo questi file in `static/img/`, con questi nomi esatti:
 | File | A cosa serve |
 |---|---|
 | `logo-negativo@1x.png` `@2x` `@3x` | il marchio su fondo scuro — l'header |
-| `logo.png` | il marchio su fondo chiaro |
+| `logo@1x.png` `@2x` `@3x` | il marchio su fondo chiaro |
 | `icona-128.png` | icona, anche per iOS |
 | `favicon.ico` | favicon |
+
+Le due serie stanno in `static/img/` e sono le sole immagini di marca che
+l'app tiene in casa. Un file di nome `logo.png` non fa parte della
+convenzione: il marchio positivo ha le sue tre densità come il negativo.
 
 Il guscio usa `@2x` e `@3x` con `srcset`, mai `@1x`: a 32px di altezza resa,
 su uno schermo ad alta densità l'`@1x` risulta sfocato. Ogni schermo prende
@@ -140,9 +144,17 @@ Un'app che al posto del logo vuole il solo nome sovrascrive lo slot:
 {% block marchio_app %}<span class="nome">AllergeniCalc</span>{% endblock %}
 ```
 
-I due loghi Cosmetech Academy — bianco per header e footer, nero per
-eventuali fondi chiari — stanno **nel pacchetto**, non nelle app: sono il
-garante, non il marchio dell'app, e non si toccano.
+I marchi Cosmetech Academy stanno **nel pacchetto**, non nelle app: sono
+il garante, non il marchio dell'app, e non si toccano.
+
+| File nel pacchetto | Quando |
+|---|---|
+| `logo-cosmetech-academy-bianco.png` | header e footer, su fondo scuro |
+| `logo-cosmetech-academy-nero.png` | eventuali fondi chiari |
+| `logo-cosmetech-academy-stella.png` | la stella Cosmetech Academy, senza logotipo |
+
+Se ne trovi una copia negli statici di un'app è un residuo: va cancellata
+quando l'app si aggancia al pacchetto.
 
 ## I colori
 
@@ -224,6 +236,7 @@ cosmetech_ui/
     fonts/             Questrial e Inter
     logo-cosmetech-academy-bianco.png   header e footer (fondo scuro)
     logo-cosmetech-academy-nero.png     per eventuali fondi chiari
+    logo-cosmetech-academy-stella.png   la stella, senza logotipo
 prototipo.html         il container approvato, riferimento del guscio
 prova/prova.py         pagina di prova, senza Flask
 ```
