@@ -38,8 +38,6 @@ non tocca lo `/static` dell'app. La chiamata è idempotente.
 ```jinja
 {% extends "lite.html" %}
 
-{% block marchio_app %}<span class="nome">AllergeniCalc</span>{% endblock %}
-
 {% block titolo %}Quali allergeni devi dichiarare in etichetta{% endblock %}
 {% block sottotitolo %}Reg. UE 2023/1545 · soglie leave-on e rinse-off{% endblock %}
 
@@ -60,7 +58,7 @@ non tocca lo `/static` dell'app. La chiamata è idempotente.
 
 | Slot | Cosa ci va |
 |---|---|
-| `marchio_app` | logo (`<img>`, 32px) e/o nome (`<span class="nome">`) dell'app |
+| `marchio_app` | il marchio dell'app. **Ha già un valore predefinito** (vedi sotto): si riempie solo per fare diversamente |
 | `titolo` | titolo dell'app; diventa l'`<h1>` |
 | `sottotitolo` | riga descrittiva sotto il titolo |
 | `utente` | riconoscimento utente (sotto) |
@@ -107,6 +105,44 @@ sessione: riceve i dati già pronti dall'app e li dispone.
 {# sessione SSO #}
 {% block utente %}<strong>{{ sso.nome }}</strong> · piano <span>{{ sso.tier }}</span> · <a href="/esci">esci</a>{% endblock %}
 ```
+
+## Le immagini dell'app: nomi uguali per tutte
+
+Il guscio non sa quale app sta servendo. Per il marchio punta sempre allo
+**stesso nome**: è l'app che ci mette il proprio file. Una nuova app si
+aggancia mettendo questi file in `static/img/`, con questi nomi esatti:
+
+| File | A cosa serve |
+|---|---|
+| `logo-negativo@1x.png` `@2x` `@3x` | il marchio su fondo scuro — l'header |
+| `logo.png` | il marchio su fondo chiaro |
+| `icona-128.png` | icona, anche per iOS |
+| `favicon.ico` | favicon |
+
+Il guscio usa `@2x` e `@3x` con `srcset`, mai `@1x`: a 32px di altezza resa,
+su uno schermo ad alta densità l'`@1x` risulta sfocato. Ogni schermo prende
+la propria densità; su un display a 1x il browser scala l'`@2x`, e resta
+nitido.
+
+Favicon e icona sono agganciate dal guscio, sempre a quei nomi: l'app non
+scrive nessun `<link rel="icon">`.
+
+L'`alt` del marchio arriva dal contesto, non da uno slot — passa `nome_app`
+al render se vuoi che sia valorizzato:
+
+```python
+return render_template("pagina.html", nome_app="AllergeniCalc")
+```
+
+Un'app che al posto del logo vuole il solo nome sovrascrive lo slot:
+
+```jinja
+{% block marchio_app %}<span class="nome">AllergeniCalc</span>{% endblock %}
+```
+
+I due loghi Cosmetech Academy — bianco per header e footer, nero per
+eventuali fondi chiari — stanno **nel pacchetto**, non nelle app: sono il
+garante, non il marchio dell'app, e non si toccano.
 
 ## I colori
 
@@ -186,7 +222,8 @@ cosmetech_ui/
   static/
     cosmetech-ui.css   tutti gli stili; le quattro variabili in cima
     fonts/             Questrial e Inter
-    logo-academy.png
+    logo-cosmetech-academy-bianco.png   header e footer (fondo scuro)
+    logo-cosmetech-academy-nero.png     per eventuali fondi chiari
 prototipo.html         il container approvato, riferimento del guscio
 prova/prova.py         pagina di prova, senza Flask
 ```

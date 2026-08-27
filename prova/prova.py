@@ -19,11 +19,19 @@ RADICE = pathlib.Path(__file__).resolve().parent.parent
 USCITA = RADICE / "prova" / "uscita"
 
 
+# Il guscio chiede all'app il proprio marchio sotto un nome fisso. Qui
+# l'app finta e' allergeni-calc: le prendiamo i file veri da disco, cosi'
+# la prova mostra anche che la convenzione sui nomi regge.
+APP_FINTA = RADICE.parent / "allergeni-calc" / "static"
+
+
 def url_for(endpoint, filename=""):
     """Sostituto di quello di Flask: qui gli statici si leggono da disco."""
-    if endpoint != "cosmetech_ui.static":
-        raise AssertionError(f"endpoint inatteso nel guscio: {endpoint}")
-    return f"../../cosmetech_ui/static/{filename}"
+    if endpoint == "cosmetech_ui.static":
+        return f"../../cosmetech_ui/static/{filename}"
+    if endpoint == "static":
+        return f"../../../allergeni-calc/static/{filename}"
+    raise AssertionError(f"endpoint inatteso nel guscio: {endpoint}")
 
 
 # Il riquadro tratteggiato del prototipo: e' scenografia della prova, non
@@ -76,6 +84,7 @@ PAGINE = {
         "footer_app": FOOTER_APP,
     }),
     "master.html": ("master.html", {
+        "marchio_app": '<span class="nome">AllergeniCalc</span>',
         # qui l'app ridefinisce anche la palette, per mostrare che bastano
         # le quattro variabili a cambiare famiglia di colore
         "testa": STILE_PROVA + PALETTE_VERDE,
@@ -95,10 +104,6 @@ PAGINE = {
 def sorgente(base, blocchi):
     """Costruisce al volo il template di un'app finta che estende il guscio."""
     righe = [f'{{% extends "{base}" %}}']
-    righe.append(
-        '{% block marchio_app %}<span class="nome">AllergeniCalc</span>'
-        "{% endblock %}"
-    )
     righe.append(
         "{% block titolo %}Quali allergeni devi dichiarare in etichetta"
         "{% endblock %}"
@@ -130,18 +135,32 @@ def controlla(reso):
 
     for nome, html in reso.items():
         for atteso, cosa in [
-            ("logo-academy.png", "logo Academy"),
             ("Uno strumento", "occhiello del garante"),
             ("P. IVA IT02924640648", "blocco legale"),
             ('class="social"', "fascia social"),
             ("pieno-2", "slot dell'app nel footer"),
             ("cosmetech-ui.css", "foglio del pacchetto"),
+            ("img/favicon.ico", "favicon dell'app"),
+            ("img/icona-128.png", "icona dell'app"),
         ]:
             if atteso not in html:
                 guasti.append(f"{nome}: manca {cosa}")
         # il logo del garante compare due volte: header e footer
-        if html.count("logo-academy.png") != 2:
-            guasti.append(f"{nome}: il logo Academy non compare in header e footer")
+        if html.count("logo-cosmetech-academy-bianco.png") != 2:
+            guasti.append(
+                f"{nome}: il logo Academy non compare in header e footer")
+
+    # il marchio predefinito: nome fisso, densita' alte, mai @1x
+    if "logo-negativo@2x.png" not in lite or "srcset" not in lite:
+        guasti.append("lite non usa il marchio predefinito con srcset")
+    if "logo-negativo@1x.png" in lite:
+        guasti.append("il marchio usa @1x: sfocato sugli schermi densi")
+    if '<span class="nome">' not in master:
+        guasti.append("master non mostra il marchio sovrascritto dall'app")
+
+    if not APP_FINTA.exists():
+        print(f"nota: {APP_FINTA} non c'e', i marchi dell'app "
+              "resteranno immagini rotte nel browser")
     return guasti
 
 
@@ -155,7 +174,8 @@ def main():
 
     reso = {}
     for nome, (base, blocchi) in PAGINE.items():
-        html = env.from_string(sorgente(base, blocchi)).render()
+        html = env.from_string(sorgente(base, blocchi)).render(
+            nome_app="AllergeniCalc")
         (USCITA / nome).write_text(html, encoding="utf-8")
         reso[nome] = html
         print(f"scritto  prova/uscita/{nome}")

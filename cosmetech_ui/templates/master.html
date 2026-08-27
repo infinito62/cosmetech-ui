@@ -4,7 +4,12 @@
 
   L'app non copia nulla di questo file: lo estende e riempie gli slot.
 
-    marchio_app   logo e/o nome dell'app, a sinistra nell'header
+    marchio_app   il marchio dell'app, a sinistra nell'header. Ha gia' un
+                  valore predefinito: il logo negativo che l'app tiene nei
+                  propri statici sotto un nome uguale per tutte
+                  (static/img/logo-negativo@2x/@3x.png). Va riempito solo
+                  se serve qualcosa di diverso, per esempio il solo nome
+                  in <span class="nome">.
     titolo        titolo dell'app
     sottotitolo   riga descrittiva sotto il titolo
     utente        riconoscimento utente (due formati, vedi README)
@@ -29,6 +34,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block copertina %}{{ self.titolo() }} — Cosmetech Academy{% endblock %}</title>
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" sizes="any">
+<link rel="icon" href="{{ url_for('static', filename='img/icona-128.png') }}" type="image/png">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='img/icona-128.png') }}">
 <link rel="stylesheet" href="{{ url_for('cosmetech_ui.static', filename='cosmetech-ui.css') }}">
 {% block testa %}{% endblock %}
 </head>
@@ -38,7 +46,15 @@
 <header class="testata">
   <div class="contenitore testata-riga">
 
-    <div class="marchio-app">{% block marchio_app %}{% endblock %}</div>
+    <div class="marchio-app">{% block marchio_app %}
+      {# Il guscio non sa quale app sta servendo: punta sempre allo stesso
+         nome, e' l'app che ci mette il suo file. Niente @1x: sui schermi
+         ad alta densita' verrebbe sfocato. #}
+      <img src="{{ url_for('static', filename='img/logo-negativo@2x.png') }}"
+           srcset="{{ url_for('static', filename='img/logo-negativo@2x.png') }} 2x,
+                   {{ url_for('static', filename='img/logo-negativo@3x.png') }} 3x"
+           alt="{{ nome_app|default('', true) }}" height="32">
+    {% endblock %}</div>
 
     <div class="identita">
       <h1>{% block titolo %}{% endblock %}</h1>
@@ -52,7 +68,7 @@
 
     <div class="garante">
       <span class="occhiello">Uno strumento</span>
-      <img src="{{ url_for('cosmetech_ui.static', filename='logo-academy.png') }}"
+      <img src="{{ url_for('cosmetech_ui.static', filename='logo-cosmetech-academy-bianco.png') }}"
            alt="Cosmetech Academy">
     </div>
 
@@ -88,7 +104,7 @@
 
   <!-- 1. marchio + social -->
   <div class="contenitore pieno-1">
-    <img src="{{ url_for('cosmetech_ui.static', filename='logo-academy.png') }}"
+    <img src="{{ url_for('cosmetech_ui.static', filename='logo-cosmetech-academy-bianco.png') }}"
          alt="Cosmetech Academy">
     <div class="social">
       <a href="#" title="Facebook">f</a>
