@@ -138,7 +138,7 @@ def controlla(reso):
         for atteso, cosa in [
             ("Uno strumento", "occhiello del garante"),
             ("P. IVA IT02924640648", "blocco legale"),
-            ('class="social"', "fascia social"),
+            ('class="ct-social"', "fascia social"),
             ("pieno-2", "slot dell'app nel footer"),
             ("cosmetech-ui.css", "foglio del pacchetto"),
             ("img/favicon.ico", "favicon dell'app"),
@@ -163,10 +163,21 @@ def controlla(reso):
         # il logo del garante e' cliccabile in header e in footer
         if html.count('href="https://cosmetechacademy.com"><img') != 2:
             guasti.append(f"{nome}: il logo Academy non e' cliccabile due volte")
-        # la fascia social non deve avere link morti
-        fascia = html.split('class="social"')[1].split("</div>")[0]
+        # la fascia social: link veri, glifi in linea, etichette per chi
+        # non vede l'icona
+        fascia = html.split('class="ct-social"')[1].split("</ul>")[0]
         if 'href="#"' in fascia:
             guasti.append(f"{nome}: un social punta ancora a #")
+        if fascia.count("<svg") != 3:
+            guasti.append(f"{nome}: i glifi social non sono tre SVG in linea")
+        if "<img" in fascia:
+            guasti.append(f"{nome}: un social carica un'immagine invece del glifo")
+        if fascia.count("aria-label=") != 3:
+            guasti.append(f"{nome}: un social non ha l'etichetta accessibile")
+        # aperti in una scheda nuova, ma senza dare alla pagina di destinazione
+        # un riferimento alla nostra finestra
+        if fascia.count('rel="noopener"') != fascia.count('target="_blank"'):
+            guasti.append(f"{nome}: un social apre in scheda nuova senza noopener")
         # lo slot dell'app sta dentro un .contenitore pieno: si allinea a
         # sinistra come le altre due sezioni invece di restare centrato
         if 'class="contenitore pieno-2"' in html:
@@ -177,6 +188,39 @@ def controlla(reso):
     css = (RADICE / "cosmetech_ui" / "static" / "cosmetech-ui.css").read_text()
     if re.search(r"(?m)^\s*label\s*[,{]", css):
         guasti.append("il css stila i <label> nudi: le app dovranno neutralizzarlo")
+
+    # Lo stile del guscio vive nel foglio, non in un <style> nel template:
+    # un blocco nel template non si sovrascrive e non si mette in cache.
+    master_sorgente = (RADICE / "cosmetech_ui" / "templates"
+                       / "master.html").read_text()
+    if "<style" in master_sorgente:
+        guasti.append("master.html porta un <style>: il css va nel foglio")
+
+    # I colori dei marchi sono identita' di terzi: letterali accanto alla
+    # regola, mai fra le variabili e mai derivati dalla palette. Se
+    # derivassero, un'app che sceglie il verde avrebbe un Facebook verde.
+    radici = "\n".join(blocco for blocco in css.split("}")
+                        if ":root" in blocco)
+    for marchio, colore in (("Facebook", "#1877F2"), ("YouTube", "#FF0000"),
+                            ("Instagram", "#EE2A7B")):
+        if colore not in css:
+            guasti.append(f"il colore di {marchio} non c'e' piu' nel foglio")
+        if colore.lower() in radici.lower():
+            guasti.append(f"il colore di {marchio} e' finito fra le variabili")
+    if re.search(r"ct-social[^}]*color-mix", css) or \
+            re.search(r"ct-social__link--(fb|ig|yt)[^{]*\{[^}]*var\(--c\d", css):
+        guasti.append("un colore di marchio deriva dalla palette dell'app")
+
+    # Quel che la fascia deve avere oltre al colore
+    for pezzo, cosa in ((":focus-visible", "il fuoco da tastiera"),
+                        ("prefers-reduced-motion", "il rispetto del movimento ridotto")):
+        if pezzo not in css:
+            guasti.append(f"la fascia social non gestisce {cosa}")
+    # A riposo il glifo e' bianco pieno: sotto .pieno vive gia' una regola
+    # sugli <a> che vincerebbe su una singola classe.
+    if ".pieno .ct-social__link {" not in css:
+        guasti.append("il glifo a riposo non e' qualificato con .pieno: "
+                      "lo vince il colore degli <a> del footer")
 
     if not APP_FINTA.exists():
         print(f"nota: {APP_FINTA} non c'e', i marchi dell'app "

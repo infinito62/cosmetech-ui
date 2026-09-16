@@ -6,6 +6,12 @@
    un'app ridefinisce, nel proprio foglio, caricato DOPO questo. Tutto il
    resto — filetti, fondi, spazi, tipografia — deriva o e' fissato qui:
    fuori dai blocchi :root non c'e' nessun colore scritto a mano.
+
+   UNA ECCEZIONE, in fondo al file: i colori dei marchi social. Sono
+   identita' di terzi, non palette dell'app. Non stanno fra le variabili e
+   non derivano da --c1-fondo, perche' un'app che cambia la propria palette
+   non deve poter cambiare il blu di Facebook. Vivono letterali accanto alla
+   regola che li usa, dove si vede subito cosa sono.
    ========================================================================= */
 
 @font-face {
@@ -56,6 +62,7 @@
   --su-fondo-forte:  rgba(255,255,255,.92);
   --su-fondo-filo:   rgba(255,255,255,.24);
   --su-fondo-filo-2: rgba(255,255,255,.18);
+  --su-fondo-vetro-0:rgba(255,255,255,.08);
   --su-fondo-vetro:  rgba(255,255,255,.14);
   --su-fondo-vetro-2:rgba(255,255,255,.26);
   --menu-voce:       rgba(255,255,255,.82);
@@ -177,14 +184,7 @@ hr.filetto { border:0; border-top:1px solid var(--filetto); margin: var(--sp-3) 
 }
 .pieno-1 > a { display:block; }
 .pieno-1 img { height:44px; width:auto; display:block; }
-.social { display:flex; gap:10px; }
-.social a {
-  width:34px; height:34px; border-radius:6px;
-  background: var(--su-fondo-vetro);
-  display:flex; align-items:center; justify-content:center;
-  color: var(--bianco); text-decoration:none; font-size:14px;
-}
-.social a:hover { background: var(--su-fondo-vetro-2); }
+/* Le icone social: vedi in fondo al file, sotto MARCHI DI TERZI. */
 
 /* 2. slot dell'app */
 .pieno-2 {
@@ -211,4 +211,87 @@ hr.filetto { border:0; border-top:1px solid var(--filetto); margin: var(--sp-3) 
   .garante img { margin-left:0; }
   .menu ul { gap: var(--sp-3); overflow-x:auto; }
   .pieno-1, .pieno-3 { flex-direction:column; align-items:flex-start; }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   MARCHI DI TERZI — le icone social del footer.
+
+   Qui e' l'unico punto del file in cui un colore sta scritto a mano fuori
+   da :root, ed e' voluto. Il blu di Facebook, il rosso di YouTube e la
+   sfumatura di Instagram sono identita' altrui: non appartengono alla
+   palette, non si mettono fra le variabili e non si derivano da
+   --c1-fondo. Se derivassero, un'app che sceglie il verde si ritroverebbe
+   un Facebook verde — che non e' una variante, e' un marchio sbagliato.
+
+   A riposo il glifo e' bianco su vetro, cosi' la fascia resta quella del
+   guscio; il colore del marchio arriva solo al passaggio e al fuoco, dove
+   e' un riconoscimento e non una decorazione.
+   ══════════════════════════════════════════════════════════ */
+.ct-social {
+  display: flex;
+  gap: .625rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Sotto .pieno vive gia' `a { color: var(--su-fondo-forte) }`, che e' bianco
+   all'92% e vincerebbe su una singola classe. Il glifo a riposo va bianco
+   pieno, quindi la regola si qualifica con .pieno. */
+.pieno .ct-social__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-btn);
+  background: var(--su-fondo-vetro-0);
+  color: var(--bianco);
+  text-decoration: none;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.ct-social__link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: block;
+}
+
+.ct-social__link:hover,
+.ct-social__link:focus-visible { transform: translateY(-1px); }
+
+/* Colore del marchio solo al passaggio. Valori letterali: sono di terzi. */
+.pieno .ct-social__link--fb:hover,
+.pieno .ct-social__link--fb:focus-visible {
+  background: #1877F2;
+  color: var(--bianco);
+}
+
+.pieno .ct-social__link--ig:hover,
+.pieno .ct-social__link--ig:focus-visible {
+  background: linear-gradient(45deg, #F9CE34 0%, #EE2A7B 50%, #6228D7 100%);
+  color: var(--bianco);
+}
+
+.pieno .ct-social__link--yt:hover,
+.pieno .ct-social__link--yt:focus-visible {
+  background: #FF0000;
+  color: var(--bianco);
+}
+
+/* Il contorno del fuoco e' bianco e non il colore del marchio: deve
+   leggersi uguale sopra tutti e tre, e sopra la sfumatura di Instagram un
+   contorno colorato sparirebbe. */
+.ct-social__link:focus-visible {
+  outline: 2px solid var(--bianco);
+  outline-offset: 2px;
+}
+
+/* Chi ha chiesto meno movimento non perde ne' il colore ne' il fuoco:
+   sparisce il solo spostamento. */
+@media (prefers-reduced-motion: reduce) {
+  .pieno .ct-social__link { transition: none; }
+  .ct-social__link:hover,
+  .ct-social__link:focus-visible { transform: none; }
 }
