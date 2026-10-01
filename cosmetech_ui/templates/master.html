@@ -158,10 +158,20 @@
   <div class="contenitore pieno-3">
     <div>Copyright © 2026 by KionPharma · P. IVA IT02924640648 ·
       <a href="mailto:info@cosmetechacademy.com">info@cosmetechacademy.com</a></div>
+    {# Indirizzi dell'Academy, scritti qui come il logo, i social e l'email:
+       sono suoi e non configurazione dell'app. Passarli come variabili
+       vorrebbe dire che un'app che si dimentica di definirle rende href=""
+       e il link torna morto senza dare alcun indizio.
+
+       In scheda nuova, con rel="noopener": chi apre l'informativa da una
+       formula a metà non deve perdere quello che ha scritto. #}
     <div class="legali">
-      <a href="#">Informativa privacy</a>
-      <a href="#">Informativa cookie</a>
-      <a href="#">Termini e condizioni</a>
+      <a href="https://cosmetechacademy.com/inizia/informativa-sulla-privacy/"
+         target="_blank" rel="noopener">Informativa privacy</a>
+      <a href="https://cosmetechacademy.com/inizia/informativa-sui-cookie/"
+         target="_blank" rel="noopener">Informativa cookie</a>
+      <a href="https://cosmetechacademy.com/inizia/termini-e-condizioni/"
+         target="_blank" rel="noopener">Termini e condizioni</a>
     </div>
   </div>
 

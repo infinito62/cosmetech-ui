@@ -178,6 +178,16 @@ def controlla(reso):
         # un riferimento alla nostra finestra
         if fascia.count('rel="noopener"') != fascia.count('target="_blank"'):
             guasti.append(f"{nome}: un social apre in scheda nuova senza noopener")
+        # nessun collegamento morto nel blocco legale: un href="#" dice al
+        # visitatore qualcosa di sbagliato sul sito, e per un'informativa
+        # privacy irraggiungibile il problema non e' solo di aspetto
+        legale = html.split('class="legali"')[1].split("</div>")[0]
+        if 'href="#"' in legale or 'href=""' in legale:
+            guasti.append(f"{nome}: un collegamento legale punta a #")
+        for atteso in ("informativa-sulla-privacy", "informativa-sui-cookie",
+                       "termini-e-condizioni"):
+            if atteso not in legale:
+                guasti.append(f"{nome}: manca il collegamento a {atteso}")
         # lo slot dell'app sta dentro un .contenitore pieno: si allinea a
         # sinistra come le altre due sezioni invece di restare centrato
         if 'class="contenitore pieno-2"' in html:
